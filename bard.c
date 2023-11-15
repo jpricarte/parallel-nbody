@@ -51,7 +51,7 @@ double ComputeNewPos( Particle [], ParticleV [], int, double);
 
 int main()
 {
-    double time;
+    double start, end;
     Particle  * particles;   /* Particles */
     ParticleV * pv;          /* Particle velocity */
     int         npart, i, j;
@@ -64,6 +64,8 @@ int main()
     particles = (Particle *) malloc(sizeof(Particle)*npart);
     pv = (ParticleV *) malloc(sizeof(ParticleV)*npart);
 /* Generate the initial values */
+    start = omp_get_wtime();
+
     InitParticles( particles, pv, npart);
     sim_t = 0.0;
 
@@ -74,6 +76,10 @@ int main()
       /* Once we have the forces, we compute the changes in position */
       sim_t += ComputeNewPos( particles, pv, npart, max_f);
     }
+
+    end = omp_get_wtime();
+
+    fprintf(stdout, "%.5lf\n", end-start);
     for (i=0; i<npart; i++)
       fprintf(stdout,"%.5lf %.5lf %.5lf\n", particles[i].x, particles[i].y, particles[i].z);
     return 0;
@@ -163,7 +169,7 @@ double ComputeNewPos( Particle particles[], ParticleV pv[], int npart, double ma
     dt_old = dt;
     dt     = dt_new;
   }
-  
+
   else if (dt_new > 4.0 * dt) {
     dt_old = dt;
     dt    *= 2.0;
