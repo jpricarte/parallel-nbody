@@ -107,7 +107,7 @@ double ComputeForces( Particle myparticles[], Particle others[], ParticleV pv[],
   double max_f;
   int i;
   max_f = 0.0;
-  #pragma omp parallel for private(rx, ry, mj, r, fx, fy)
+  #pragma omp parallel for
   for (i=0; i<npart; i++) {
     int j;
     double xi, yi, mi, rx, ry, mj, r, fx, fy, rmin;
@@ -148,9 +148,10 @@ double ComputeNewPos( Particle particles[], ParticleV pv[], int npart, double ma
   a2	 = 2.0 / (dt_old * (dt + dt_old));
   a1	 = -(a0 + a2);
 
+  double xi, yi;
+  
   #pragma omp parallel for private(xi, yi)
   for (i=0; i<npart; i++) {
-    double xi, yi;
     xi	           = particles[i].x;
     yi	           = particles[i].y;
     particles[i].x = (pv[i].fx - a1 * xi - a2 * pv[i].xold) / a0;

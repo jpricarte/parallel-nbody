@@ -79,7 +79,7 @@ int main()
 
     end = omp_get_wtime();
 
-    fprintf(stdout, "%.5lf\n", end-start);
+    fprintf(stdout, "%lf\n", end-start);
     for (i=0; i<npart; i++)
       fprintf(stdout,"%.5lf %.5lf %.5lf\n", particles[i].x, particles[i].y, particles[i].z);
     return 0;
