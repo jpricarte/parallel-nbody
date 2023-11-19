@@ -49,17 +49,19 @@ void InitParticles( Particle[], ParticleV [], int );
 double ComputeForces( Particle [], Particle [], ParticleV [], int );
 double ComputeNewPos( Particle [], ParticleV [], int, double);
 
-int main()
+int main(int argc, char* argv[])
 {
     double start, end;
     Particle  * particles;   /* Particles */
     ParticleV * pv;          /* Particle velocity */
     int         npart, i, j;
-    int         cnt;         /* number of times in loop */
+    int         niter, cnt;  /* number of times in loop */
+    int         nthreads;
     double      sim_t;       /* Simulation time */
     int tmp;
     tmp = fscanf(stdin,"%d\n",&npart);
     tmp = fscanf(stdin,"%d\n",&cnt);
+    niter = cnt;
 /* Allocate memory for particles */
     particles = (Particle *) malloc(sizeof(Particle)*npart);
     pv = (ParticleV *) malloc(sizeof(ParticleV)*npart);
@@ -78,10 +80,15 @@ int main()
     }
 
     end = omp_get_wtime();
-
-    fprintf(stdout, "%.5lf\n", end-start);
-    for (i=0; i<npart; i++)
-      fprintf(stdout,"%.5lf %.5lf %.5lf\n", particles[i].x, particles[i].y, particles[i].z);
+    #pragma omp parallel 
+    {
+      #pragma omp single
+      nthreads = omp_get_num_threads();
+    }
+    // Output format: num_threads,experiment_num,num_particles,num_iterations,time
+    fprintf(stdout, "%d,%s,%d,%d,%lf\n", nthreads, argv[1], npart, niter, end-start);
+    // for (i=0; i<npart; i++)
+    //   fprintf(stdout,"%.5lf %.5lf %.5lf\n", particles[i].x, particles[i].y, particles[i].z);
     return 0;
 }
 
