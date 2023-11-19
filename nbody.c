@@ -114,6 +114,7 @@ double ComputeForces( Particle myparticles[], Particle others[], ParticleV pv[],
   double max_f;
   int i;
   max_f = 0.0;
+  
   #pragma omp parallel for reduction(max:max_f) schedule(static)
   for (i=0; i<npart; i++) {
     int j;
@@ -152,7 +153,8 @@ double ComputeNewPos( Particle particles[], ParticleV pv[], int npart, double ma
   a0	 = 2.0 / (dt * (dt + dt_old));
   a2	 = 2.0 / (dt_old * (dt + dt_old));
   a1	 = -(a0 + a2);
-  #pragma omp parallel for
+
+  #pragma omp parallel for schedule(static)
   for (i=0; i<npart; i++) {
     double xi, yi;
     xi	           = particles[i].x;
